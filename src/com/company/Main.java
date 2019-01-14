@@ -11,19 +11,19 @@ public class Main {
     public static void main(String[] args) {
         int currency = 50;
 
-        CyclicBarrier cb = new CyclicBarrier(currency);
+        CyclicBarrier cb = new CyclicBarrier(currency);//通过它可以实现让一组线程等待至某个状态之后再全部同时执行
 
-        //CreatService creatService = new CreatNumImp1();
-        //CreatService creatService = new CreatNumImpWithLock();
+        //CreatService creatService = new CreatNumImp1();//没加锁的订单编号服务类
+        //CreatService creatService = new CreatNumImpWithLock();//加了普通锁的订单编号服务类
 
         for (int i = 0; i < currency; i++) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    CreatService creatService = new CreateNumImpWiehZkLock();//模拟多台服务器的并发处理
+                    CreatService creatService = new CreateNumImpWiehZkLock();//模拟多台服务器的并发处理，加了分布式锁的订单编号服务类
                     System.out.println(Thread.currentThread().getName() + "-----------准备好了-------------");
                     try {
-                        cb.await();
+                        cb.await();//模拟并环境
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -35,7 +35,7 @@ public class Main {
             }).start();
         }
 
-        /*ZkClient client = new ZkClient("0.0.0.0/0.0.0.0:2181");
+        /*ZkClient client = new ZkClient("localhost:2181");
         client.setZkSerializer(new MyZkSerializer());
         client.subscribeDataChanges("/mike/a", new IZkDataListener() {
             @Override
